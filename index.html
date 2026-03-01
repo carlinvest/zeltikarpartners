@@ -112,4 +112,150 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .converter div { text-align: left; }
+        .converter input { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 160px; font-size: 1rem; margin-top: 5px; }
+
+        /* CONTACTO */
+        .contact-section { padding: 80px 8%; background: var(--azul-oscuro); color: white; text-align: center; }
+        .exchange-links { margin: 30px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn-ex { padding: 10px 20px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold; font-size: 0.9rem; }
+        
+        form { max-width: 600px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 15px; }
+        form input, form textarea { padding: 15px; border-radius: 5px; border: none; width: 100%; font-size: 1rem; }
+        form button { background: var(--dorado); color: white; padding: 18px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; font-size: 1.1rem; transition: 0.3s; }
+        form button:hover { background: #b08d4a; }
+
+        /* LEGAL */
+        .legal { padding: 40px 8%; background: #fdfdfd; border-top: 1px solid #eee; font-size: 0.85rem; color: #777; }
+        .legal-content { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+
+        footer { background: #001a33; color: white; text-align: center; padding: 30px; font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            .hero { text-align: center; padding: 40px 5%; }
+            .converter { flex-direction: column; gap: 10px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Zelticar Partners</div>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#servicios">Intermediación</a>
+            <a href="#mercado">Mercado</a>
+            <a href="#contacto">Contacto</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="inicio">
+        <div class="hero-text">
+            <h1>Zelticar Partners</h1>
+            <p>Intermediación financiera de alto nivel y gestión de activos digitales. Conectamos su capital con las oportunidades del mañana desde Cambados.</p>
+            <a href="#contacto" style="background: var(--dorado); color: white; padding: 16px 32px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Consultoría Profesional</a>
+        </div>
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Zelticar Partners Consulting" class="hero-img">
+    </section>
+
+    <section class="services" id="servicios">
+        <h2>Servicios Especializados</h2>
+        <div class="services-grid">
+            <div class="card">
+                <h3>Intermediación OTC</h3>
+                <p>Facilitamos operaciones de gran volumen en activos digitales con total discreción y seguridad jurídica.</p>
+            </div>
+            <div class="card">
+                <h3>Estrategia de Activos</h3>
+                <p>Asesoramiento personalizado para la optimización de carteras en entornos volátiles.</p>
+            </div>
+            <div class="card">
+                <h3>Puente Financiero</h3>
+                <p>Conexión directa con los principales exchanges y liquidez institucional del mercado global.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="market-section" id="mercado">
+        <h2>Monitor BTC / EUR en Tiempo Real</h2>
+        <div class="terminal-box">
+            <div id="tradingview_widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+            <script type="text/javascript">
+                new TradingView.widget({
+                    "width": "100%", "height": 450, "symbol": "BINANCE:BTCEUR",
+                    "interval": "D", "timezone": "Europe/Madrid", "theme": "dark",
+                    "style": "1", "locale": "es", "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false, "hide_side_toolbar": false,
+                    "allow_symbol_change": true, "container_id": "tradingview_widget"
+                });
+            </script>
+        </div>
+
+        <div class="converter">
+            <div>
+                <label>Bitcoin (BTC)</label><br>
+                <input type="number" id="btc" placeholder="0.00" oninput="calcBTC()">
+            </div>
+            <div style="font-size: 1.5rem; color: var(--dorado); font-weight: bold; align-self: flex-end; padding-bottom: 10px;">⇆</div>
+            <div>
+                <label>Euros (EUR)</label><br>
+                <input type="number" id="eur" placeholder="0.00" oninput="calcEUR()">
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contacto">
+        <h2>Contacto Directo</h2>
+        <p>Inicie su gestión financiera hoy mismo</p>
+        
+        <div class="exchange-links">
+            <a href="https://www.binance.com" target="_blank" class="btn-ex" style="background:#f3ba2f; color:#000;">Binance</a>
+            <a href="https://www.coinbase.com" target="_blank" class="btn-ex" style="background:#0052ff;">Coinbase</a>
+            <a href="https://www.bitpanda.com" target="_blank" class="btn-ex" style="background:#000;">Bitpanda</a>
+        </div>
+
+        <p>Email: <strong>zelticarpartners@gmail.com</strong></p>
+
+        <form action="mailto:zelticarpartners@gmail.com" method="post" enctype="text/plain">
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <textarea name="mensaje" rows="4" placeholder="Describa su consulta de intermediación" required></textarea>
+            <button type="submit">Enviar Solicitud</button>
+        </form>
+    </section>
+
+    <section class="legal">
+        <div class="legal-content">
+            <div>
+                <h4>Aviso Legal</h4>
+                <p>Zelticar Partners es una marca de intermediación informativa. La inversión en activos digitales conlleva riesgos significativos. No somos responsables de decisiones financieras individuales.</p>
+            </div>
+            <div>
+                <h4>Privacidad</h4>
+                <p>Cumplimos con el RGPD. Sus datos solo se utilizarán para responder a su consulta y no serán cedidos a terceros bajo ninguna circunstancia.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Zelticar Partners | Cambados, Pontevedra | zelticarpartners.es</p>
+    </footer>
+
+    <script>
+        const precioActual = 62500; // Valor aproximado para la calculadora
+        function calcBTC() {
+            const btcValue = document.getElementById('btc').value;
+            document.getElementById('eur').value = (btcValue * precioActual).toFixed(2);
+        }
+        function calcEUR() {
+            const eurValue = document.getElementById('eur').value;
+            document.getElementById('btc').value = (eurValue / precioActual).toFixed(6);
+        }
+    </script>
+
+</body>
+</html>
