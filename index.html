@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zelticar Partners | Intermediación Financiera Digital</title>
     <meta name="description" content="Zelticar Partners: Expertos en intermediación financiera y gestión de activos digitales en Valladolid.">
@@ -173,12 +173,13 @@
                         <option value="BTC">BTC</option>
                         <option value="ETH">ETH</option>
                         <option value="SOL">SOL</option>
+                        <option value="USDT">USDT</option>
                     </select>
                 </div>
             </div>
             <div style="font-size: 1.5rem; margin-bottom: 20px; color: white;">⇅</div>
             <div class="input-group">
-                <label>Recibo (Estimado)</label>
+                <label>Precio Real Binance</label>
                 <div class="input-wrapper">
                     <input type="number" id="outputVal" readonly>
                     <select id="outputCurr" onchange="updateConvert()">
@@ -187,6 +188,7 @@
                         <option value="SOL">SOL</option>
                         <option value="EUR">EUR</option>
                         <option value="USD">USD</option>
+                        <option value="USDT">USDT</option>
                     </select>
                 </div>
             </div>
@@ -254,19 +256,16 @@
         }
 
         try {
-            // Intentamos obtener el par directo o el inverso (Binance usa BTC/EUR, no EUR/BTC)
-            let symbol = from + to;
+            let symbol;
             let inverse = false;
-            
-            // Lista de pares comunes que Binance tiene contra el Euro
-            const pairsWithEUR = ["BTC", "ETH", "SOL", "USDT"];
-            
-            if (from === "EUR" && pairsWithEUR.includes(to)) {
-                symbol = to + "EUR";
+
+            if (from === "EUR" || from === "USD") {
+                const fiat = from === "USD" ? "USDT" : "EUR";
+                symbol = to + fiat; 
                 inverse = true;
-            } else if (from === "USD") {
-                symbol = to + "USDT"; // Usamos USDT como equivalente a USD en Binance
-                inverse = true;
+            } else {
+                const fiatTo = (to === "EUR" || to === "USD") ? (to === "USD" ? "USDT" : "EUR") : to;
+                symbol = from + fiatTo; 
             }
 
             const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`);
@@ -276,20 +275,16 @@
                 let price = parseFloat(data.price);
                 let finalPrice = inverse ? (1 / price) : price;
                 let result = inputVal * finalPrice;
-                
-                // Si el destino es cripto, damos 6 decimales; si es fiat, 2.
                 const decimals = (to === 'BTC' || to === 'ETH' || to === 'SOL') ? 6 : 2;
                 outputEl.value = result.toFixed(decimals);
             }
         } catch (e) {
-            // Si la API falla o el par no existe, usamos una tasa de seguridad básica
-            const rates = { EUR: 1, USD: 1.08, BTC: 0.000016, ETH: 0.00035, SOL: 0.009 };
+            const rates = { EUR: 1, USD: 1.09, BTC: 0.000015, ETH: 0.00032, SOL: 0.0085, USDT: 1.09 };
             const inEUR = inputVal / (rates[from] || 1);
             const result = inEUR * (rates[to] || 1);
-            outputEl.value = result.toFixed(to === 'BTC' ? 6 : 2);
+            outputEl.value = result.toFixed(to === 'BTC' || to === 'ETH' || to === 'SOL' ? 6 : 2);
         }
     }
-    // Ejecutar al cargar para que no aparezca vacío
     window.onload = updateConvert;
 </script>
 </body>
