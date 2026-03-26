@@ -230,22 +230,59 @@
     </footer>
 
     <script>
-        const cryptoRates = { EUR: 1, USD: 1.09, BTC: 0.000015, ETH: 0.00032, SOL: 0.0085 };
-        function updateConvert() {
-            const valInput = document.getElementById('inputVal').value;
-            const from = document.getElementById('inputCurr').value;
-            const to = document.getElementById('outputCurr').value;
-            const val = parseFloat(valInput);
-            if (!isNaN(val) && val > 0) {
-                const inEUR = val / cryptoRates[from];
-                const result = inEUR * cryptoRates[to];
-                const decimals = (to === 'BTC' || to === 'ETH' || to === 'SOL') ? 6 : 2;
-                document.getElementById('outputVal').value = result.toFixed(decimals);
-            } else {
-                document.getElementById('outputVal').value = "";
-            }
+    async function updateConvert() {
+        const inputVal = document.getElementById('inputVal').value;
+        const from = document.getElementById('inputCurr').value;
+        const to = document.getElementById('outputCurr').value;
+        const outputEl = document.getElementById('outputVal');
+
+        if (!inputVal || inputVal <= 0) {
+            outputEl.value = "";
+            return;
         }
-        window.onload = updateConvert;
-    </script>
+        if (from === to) {
+            outputEl.value = inputVal;
+            return;
+        }
+
+        try {
+            // Intentamos obtener el par directo o el inverso (Binance usa BTC/EUR, no EUR/BTC)
+            let symbol = from + to;
+            let inverse = false;
+            
+            // Lista de pares comunes que Binance tiene contra el Euro
+            const pairsWithEUR = ["BTC", "ETH", "SOL", "USDT"];
+            
+            if (from === "EUR" && pairsWithEUR.includes(to)) {
+                symbol = to + "EUR";
+                inverse = true;
+            } else if (from === "USD") {
+                symbol = to + "USDT"; // Usamos USDT como equivalente a USD en Binance
+                inverse = true;
+            }
+
+            const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`);
+            const data = await response.json();
+            
+            if (data.price) {
+                let price = parseFloat(data.price);
+                let finalPrice = inverse ? (1 / price) : price;
+                let result = inputVal * finalPrice;
+                
+                // Si el destino es cripto, damos 6 decimales; si es fiat, 2.
+                const decimals = (to === 'BTC' || to === 'ETH' || to === 'SOL') ? 6 : 2;
+                outputEl.value = result.toFixed(decimals);
+            }
+        } catch (e) {
+            // Si la API falla o el par no existe, usamos una tasa de seguridad básica
+            const rates = { EUR: 1, USD: 1.08, BTC: 0.000016, ETH: 0.00035, SOL: 0.009 };
+            const inEUR = inputVal / (rates[from] || 1);
+            const result = inEUR * (rates[to] || 1);
+            outputEl.value = result.toFixed(to === 'BTC' ? 6 : 2);
+        }
+    }
+    // Ejecutar al cargar para que no aparezca vacío
+    window.onload = updateConvert;
+</script>
 </body>
 </html>
