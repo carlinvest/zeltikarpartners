@@ -289,10 +289,11 @@
         <svg width="35" height="35" fill="white" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.483 8.413-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.308 1.654zm6.749-3.336c1.517.898 3.188 1.371 4.881 1.372 5.276 0 9.567-4.291 9.57-9.567.001-2.559-1.002-4.965-2.825-6.788-1.824-1.824-4.232-2.826-6.787-2.827-5.276 0-9.566 4.29-9.57 9.567-.001 1.836.52 3.626 1.503 5.175l-.993 3.628 3.721-.976zm11.381-6.864c-.312-.156-1.848-.912-2.126-1.013-.279-.101-.482-.151-.684.151-.202.302-.782 1.011-.962 1.212-.18.201-.359.227-.671.071-.312-.156-1.317-.486-2.508-1.549-.926-.826-1.551-1.846-1.733-2.16-.182-.314-.019-.484.137-.639.141-.14.312-.365.468-.547.156-.182.209-.313.312-.521.104-.209.052-.391-.026-.547-.078-.156-.684-1.651-.937-2.261-.247-.595-.497-.514-.684-.524-.177-.008-.38-.01-.582-.01-.202 0-.531.075-.809.377-.278.302-1.062 1.037-1.062 2.532 0 1.495 1.088 2.937 1.239 3.138.151.201 2.14 3.268 5.184 4.577.724.311 1.289.496 1.73.636.727.23 1.388.197 1.911.119.583-.087 1.848-.755 2.11-.1481.262-.725.262-1.345.184-1.471-.078-.126-.285-.202-.597-.358z"/></svg>
     </a>
     <div id="cookie-banner" class="cookie-banner">
-        <span>Utilizamos cookies propias para mejorar su experiencia de navegación. Al continuar navegando, acepta nuestra política de cookies.</span>
-        <button class="cookie-btn" onclick="acceptCookies()">Aceptar</button>
+    <span>Utilizamos cookies propias para mejorar su experiencia de navegación. Al continuar navegando, acepta nuestra política de cookies.</span>
+    <button class="cookie-btn" onclick="acceptCookies()">Aceptar</button>
     </div>
     <script>
+    // 1. FUNCIÓN DE LA CALCULADORA (La que ya tienes)
     async function updateConvert() {
         const inputVal = document.getElementById('inputVal').value;
         const from = document.getElementById('inputCurr').value;
@@ -311,7 +312,6 @@
         try {
             let symbol;
             let inverse = false;
-
             if (from === "EUR" || from === "USD") {
                 const fiat = from === "USD" ? "USDT" : "EUR";
                 symbol = to + fiat; 
@@ -320,10 +320,8 @@
                 const fiatTo = (to === "EUR" || to === "USD") ? (to === "USD" ? "USDT" : "EUR") : to;
                 symbol = from + fiatTo; 
             }
-
             const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`);
             const data = await response.json();
-            
             if (data.price) {
                 let price = parseFloat(data.price);
                 let finalPrice = inverse ? (1 / price) : price;
@@ -335,10 +333,30 @@
             const rates = { EUR: 1, USD: 1.09, BTC: 0.000015, ETH: 0.00032, SOL: 0.0085, USDT: 1.09 };
             const inEUR = inputVal / (rates[from] || 1);
             const result = inEUR * (rates[to] || 1);
-            outputEl.value = result.toFixed(to === 'BTC' || to === 'ETH' || to === 'SOL' ? 6 : 2);
+            outputEl.value = result.toFixed(to === 'BTC' ? 6 : 2);
         }
     }
-    window.onload = updateConvert;
+
+    // 2. FUNCIÓN PARA LAS COOKIES (Añade esto aquí abajo)
+    function acceptCookies() {
+        const banner = document.getElementById('cookie-banner');
+        if (banner) {
+            banner.style.display = 'none';
+            localStorage.setItem('cookiesAceptadas', 'true');
+        }
+    }
+
+    // 3. ACCIONES AL CARGAR LA PÁGINA
+    window.onload = function() {
+        // Ejecuta la calculadora una vez al inicio
+        updateConvert();
+        
+        // Comprueba si ya aceptó las cookies para ocultar el banner
+        if (localStorage.getItem('cookiesAceptadas') === 'true') {
+            const banner = document.getElementById('cookie-banner');
+            if (banner) banner.style.display = 'none';
+        }
+    };
 </script>
 </body>
 </html>
